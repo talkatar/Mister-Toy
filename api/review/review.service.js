@@ -69,7 +69,7 @@ async function remove(reviewId) {
         const collection = await dbService.getCollection('review')
         // remove only if user is owner/admin
         const criteria = { _id: ObjectId(reviewId) }
-        if (!loggedinUser.isAdmin) criteria.byUserId = ObjectId(loggedinUser._id)
+        if (!loggedinUser.isAdmin) criteria.userId = ObjectId(loggedinUser._id)
         const {deletedCount} = await collection.deleteOne(criteria)
         return deletedCount
     } catch (err) {
@@ -82,8 +82,8 @@ async function remove(reviewId) {
 async function add(review) {
     try {
         const reviewToAdd = {
-            byUserId: ObjectId(review.byUserId),
-            aboutUserId: ObjectId(review.aboutUserId),
+            userId: ObjectId(review.userId),
+            toyId: ObjectId(review.toyId),
             txt: review.txt
         }
         const collection = await dbService.getCollection('review')
@@ -97,7 +97,7 @@ async function add(review) {
 
 function _buildCriteria(filterBy) {
     const criteria = {}
-    if (filterBy.byUserId) criteria.byUserId = filterBy.byUserId
+    if (filterBy.userId) criteria.userId = filterBy.userId
     return criteria
 }
 

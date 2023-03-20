@@ -1,6 +1,6 @@
 
 
-require('dotev').config()
+require('dotenv').config()
 
 module.exports = {
   dbURL:process.env.ATLAS_URL,

@@ -36,28 +36,28 @@ async function addReview(req, res) {
  
     try {
         var review = req.body
-        review.byUserId = loggedinUser._id
+        review.userId = loggedinUser._id
         review = await reviewService.add(review)
         
         // prepare the updated review for sending out
-        
+        review.toy = await userService.getById(review.toyId)
+
         // Give the user credit for adding a review
-        // var user = await userService.getById(review.byUserId)
+        // var user = await userService.getById(review.userId)
         // user.score += 10
         // loggedinUser.score += 10
 
         // loggedinUser = await userService.update(loggedinUser)
-        // שwait userService.getById(review.aboutUserId)
-        // review.byUser = 
+        review.user = loggedinUser
 
         // User info is saved also in the login-token, update it
         const loginToken = authService.getLoginToken(loggedinUser)
         res.cookie('loginToken', loginToken)
 
-        delete review.byUserId
+        delete review.userId
 
         socketService.broadcast({type: 'review-added', data: review, userId: loggedinUser._id})
-        socketService.emitToUser({type: 'review-about-you', data: review, userId: review.aboutUser._id})
+        socketService.emitToUser({type: 'review-about-you', data: review, userId: review.toy._id})
         
         const fullUser = await userService.getById(loggedinUser._id)
         socketService.emitTo({type: 'user-updated', data: fullUser, label: fullUser._id})
